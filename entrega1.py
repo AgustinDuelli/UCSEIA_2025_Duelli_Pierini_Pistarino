@@ -8,7 +8,7 @@ from itertools import permutations
 # Concentración: utilizado para acciones.
 # Paredes: casillas que no se ocupan por Jedi o droides.
 
-''' Acciones:
+""" Acciones:
 1. Moverse
     El Jedi se mueve en casillas adjacentes. No puede atravesar paredes.
     Tiempo: 1s
@@ -29,21 +29,21 @@ from itertools import permutations
     El Jedi toma un descanso lejos de los droides para recuperarse. No pueden haber droides en su casilla ni en las adyacentes.
     Tiempo: 3s
     Concentración consumida: -10
-'''
+"""
 
-MOVE="move"
-JUMP="jump"
-SLASH="slash"
-FORCE="force"
-REST="rest"
+MOVE = "move"
+JUMP = "jump"
+SLASH = "slash"
+FORCE = "force"
+REST = "rest"
 
-ACTION_RELATION={
-    #NOMBRE: (TIEMPO, CONCENTRACIÓN_CONSUMIDA)
+ACTION_RELATION = {
+    # NOMBRE: (TIEMPO, CONCENTRACIÓN_CONSUMIDA)
     MOVE: (1, 0),
     JUMP: (1, 1),
-    SLASH: (1,1),
-    FORCE: (2,5),
-    REST: (3,-10)
+    SLASH: (1, 1),
+    FORCE: (2, 5),
+    REST: (3, -10),
 }
 
 WALLS = []
@@ -60,6 +60,7 @@ def find_droids_for_position(position, droids):
             return True
     return False
 
+
 def diminish_droids_in_position(position, droids):
     # obtener datos de posición
     x, y = position
@@ -72,6 +73,7 @@ def diminish_droids_in_position(position, droids):
             droids[i] = (x_position, y_position, amount)
             return droids, amount
     return droids, -1
+
 
 def remove_droid_position(position, droids):
     # obtener datos de posición a averiguar
@@ -89,20 +91,23 @@ def remove_droid_position(position, droids):
 # calculate_attack_amount
 # quadrants_distance(incluye: brute_force_travel_distance, chebyshev_distance)
 
-def calculate_attack_amount(droids: tuple[tuple[int, int, int]], jedi_concentration: int):
-    '''
+
+def calculate_attack_amount(
+    droids: tuple[tuple[int, int, int]], jedi_concentration: int
+):
+    """
     Calcula cantidad de ataques mínimos necesarios para ganar. Por cada casilla con drones, mínimo se necesita un ataque. \n
     Si se tienen múltiples drones, se agrega otro valor (ataque de fuerza de costo 2). \n
     Si se tienen más de 5 drones pero no concentración, se agrega el costo de descansar (3s) más 2s en el primer caso de ataque con fuerza. \n
-    '''
+    """
 
     total = 0
 
     concentration_left = jedi_concentration
 
     for droid in droids:
-    # si existe la posición hay un dron
-    # como mínimo se necesita atacar (costo: 1s)
+        # si existe la posición hay un dron
+        # como mínimo se necesita atacar (costo: 1s)
         total += 1
 
         _, _, amount = droid
@@ -119,8 +124,9 @@ def calculate_attack_amount(droids: tuple[tuple[int, int, int]], jedi_concentrat
 
     return total
 
+
 def quadrants_distance(droids: tuple[tuple[int, int, int]], jedi: tuple[int, int]):
-    '''
+    """
     Calcula distancias máximas de cada cuadrante del mapa
     Permite omitir celdas que se encuentra una detrás de otra
     Busca el camino más corto para llegar a cada punto uno detrás de otros.
@@ -137,7 +143,7 @@ def quadrants_distance(droids: tuple[tuple[int, int, int]], jedi: tuple[int, int
     Para el cuadrante izquierdo superior (0), la distancia mayor es la esquina. \n
     Para el cuadrante derecho inferior (2), la distancia mayor es el que está más cercano a la pared, aproximado por distancia de chevyshev.\n
     Luego de tener la distancia máxima de cada cuadrante, se busca el camino más corto para recorrer todos los puntos.
-    '''
+    """
 
     # obtiene posiciones de droide y jedi descompuestas en eje vertical y horizontal
     x_jedi, y_jedi = jedi
@@ -154,7 +160,6 @@ def quadrants_distance(droids: tuple[tuple[int, int, int]], jedi: tuple[int, int
     for droid in droids:
         x_droid, y_droid, _ = droid
 
-
         # verificar que no sea la misma casilla que el Jedi
         if x_droid == x_jedi and y_droid == y_jedi:
             continue
@@ -165,44 +170,53 @@ def quadrants_distance(droids: tuple[tuple[int, int, int]], jedi: tuple[int, int
 
         # cuadrante 0
         if x_droid <= x_jedi and y_droid < y_jedi and temp_dist >= quadrant_0:
-                quadrant_0 = temp_dist
-                quadrant_0_position = (x_droid, y_droid)
+            quadrant_0 = temp_dist
+            quadrant_0_position = (x_droid, y_droid)
         # cuadrante 1
         elif x_droid < x_jedi and y_droid >= y_jedi and temp_dist >= quadrant_1:
-                quadrant_1 = temp_dist
-                quadrant_1_position = (x_droid, y_droid)
+            quadrant_1 = temp_dist
+            quadrant_1_position = (x_droid, y_droid)
         # cuadrante 2
         elif x_droid >= x_jedi and y_droid > y_jedi and temp_dist >= quadrant_2:
-                quadrant_2 = temp_dist
-                quadrant_2_position = (x_droid, y_droid)
+            quadrant_2 = temp_dist
+            quadrant_2_position = (x_droid, y_droid)
         # cuadrante 3
         elif x_droid > x_jedi and y_droid <= y_jedi and temp_dist >= quadrant_3:
-                quadrant_3 = temp_dist
-                quadrant_3_position = (x_droid, y_droid)
-
+            quadrant_3 = temp_dist
+            quadrant_3_position = (x_droid, y_droid)
 
     # se genera una lista con los valores máximos de posición por distancia al Jedi de cada cuadrante
-    quadrants_max_value = [quadrant_0_position, quadrant_1_position, quadrant_2_position, quadrant_3_position]
+    quadrants_max_value = [
+        quadrant_0_position,
+        quadrant_1_position,
+        quadrant_2_position,
+        quadrant_3_position,
+    ]
 
     # se eliminan aquellos cuadrantes sin droides alejados de la posición del Jedi
-    quadrants_max_position = list(quadrant for quadrant in quadrants_max_value if quadrant is not None)
+    quadrants_max_position = list(
+        quadrant for quadrant in quadrants_max_value if quadrant is not None
+    )
 
     # se busca la distancia de viaje mínima para recorrer todos los puntos
     total_travel_distance = brute_force_travel_distance(jedi, quadrants_max_position)
-    
+
     return total_travel_distance
 
-def brute_force_travel_distance(start: tuple[int, int], points: list[tuple[int, int]]) -> float:
-    '''
+
+def brute_force_travel_distance(
+    start: tuple[int, int], points: list[tuple[int, int]]
+) -> float:
+    """
     Busca de las permutaciones de todos los puntos, el camino más corto desde el punto de inicio para alcanzar todos los puntos
 
     points: puntos que deben recorrerse
     start: punto de inicio
 
     Los puntos son la posición en dos ejes con valores discretos.
-    '''
+    """
 
-    min_cost = float('inf')
+    min_cost = float("inf")
 
     for permutation in permutations(points):
         cost = 0
@@ -215,8 +229,10 @@ def brute_force_travel_distance(start: tuple[int, int], points: list[tuple[int, 
 
     return min_cost
 
+
 def chebyshev_distance(a: tuple[int, int], b: tuple[int, int]) -> int:
     return max(abs(a[0] - b[0]), abs(a[1] - b[1]))
+
 
 class JediProblem(SearchProblem):
 
@@ -231,10 +247,10 @@ class JediProblem(SearchProblem):
         action_type, _ = action
 
         # calculo de costo por segundos de tiempo tomados para realizar la acción
-        time, _ =ACTION_RELATION[action_type]
+        time, _ = ACTION_RELATION[action_type]
 
         return time
-        
+
     def actions(self, state):
         jedi, droids = state
         global WALLS
@@ -246,18 +262,13 @@ class JediProblem(SearchProblem):
         # acciones que no necesitan concentración
 
         # movimientos adjacentes
-        adjacent_movements = [
-            (0,1),
-            (0,-1),
-            (1,0),
-            (-1,0)
-        ]
+        adjacent_movements = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
         # variable para verificar droides adjacentes
         no_adjacency = True
 
-        if find_droids_for_position((jedi_x,jedi_y),droids):
-                no_adjacency = False
+        if find_droids_for_position((jedi_x, jedi_y), droids):
+            no_adjacency = False
 
         for move in adjacent_movements:
             x_movement, y_movement = move
@@ -267,27 +278,22 @@ class JediProblem(SearchProblem):
             if jedi_new_position in WALLS:
                 continue
             # si hay droides en la posición nueva, entonces hay droides adjacentes a la posición actual
-            if find_droids_for_position(jedi_new_position,droids):
+            if find_droids_for_position(jedi_new_position, droids):
                 no_adjacency = False
 
             available_actions.append((MOVE, jedi_new_position))
 
         # si no hay droides adjacentes a posiciones actual, se puede descansar
         if no_adjacency:
-            available_actions.append((REST,None))
+            available_actions.append((REST, None))
 
         # verificar concentración antes de avanzar
         if jedi_concentration < 1:
-            return available_actions 
-        
+            return available_actions
+
         # acciones que necesitan concentración
         # movimientos diagonales
-        diagonal_movements = [
-            (1,1),
-            (1,-1),
-            (-1,1),
-            (-1,-1)
-        ]
+        diagonal_movements = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
 
         for move in diagonal_movements:
             x_movement, y_movement = move
@@ -303,14 +309,14 @@ class JediProblem(SearchProblem):
         jedi_position = jedi_x, jedi_y
         if find_droids_for_position(jedi_position, droids):
             # puede atacar debido a que tiene concentración
-            available_actions.append((SLASH,None))
+            available_actions.append((SLASH, None))
 
             # si tiene suficiente concentración, puede hacer un ataque con la fuerza
             if jedi_concentration >= 5:
                 available_actions.append((FORCE, None))
 
         return available_actions
-    
+
     def result(self, state, action):
         # cambiar de tuplas a listas el estado
         state_list = list(list(state_item) for state_item in state)
@@ -337,12 +343,14 @@ class JediProblem(SearchProblem):
         # se genera el ataque a droide
         jedi_position = (jedi_x, jedi_y)
         if type_action == SLASH:
-            droids, droids_left_position = diminish_droids_in_position(jedi_position, droids)
-            
+            droids, droids_left_position = diminish_droids_in_position(
+                jedi_position, droids
+            )
+
             # si se eliminó el último droid, eliminar droides de lista
             if droids_left_position == 0:
                 droids = remove_droid_position(jedi_position, droids)
-        
+
         # se atacan a todos los droides de la casilla actual
         if type_action == FORCE:
             droids = remove_droid_position(jedi_position, droids)
@@ -366,15 +374,14 @@ class JediProblem(SearchProblem):
 
         # suma la distancia necearia para visitar los droides más lejanos de cada cuadrante
         # visita los droides en orden para mejor aproximación
-        # cuadrantes: 
+        # cuadrantes:
         #   [ 0   1  1 ]
         #     0   j  2
         #   [ 3   3  2 ]
         # j = jedi
-        # 
+        #
         heuristic += quadrants_distance(droids, (jedi_x, jedi_y))
         return heuristic
-
 
 
 def play_game(jedi_at, jedi_concentration, walls, droids):
@@ -385,10 +392,7 @@ def play_game(jedi_at, jedi_concentration, walls, droids):
     state_droids = tuple(droid for droid in droids)
 
     # estado inicial del problema
-    state = (
-        (jedi_x_pos, jedi_y_pos, jedi_concentration),
-        state_droids
-    )
+    state = ((jedi_x_pos, jedi_y_pos, jedi_concentration), state_droids)
 
     # llamar al problema de búsqueda
     problem = JediProblem(state)
@@ -407,6 +411,7 @@ def play_game(jedi_at, jedi_concentration, walls, droids):
     else:
         print("what the potato?")
     return jedi_actions
+
 
 # mejoras posibles de heurística:
 # 1. ver si hay paredes en el medio
