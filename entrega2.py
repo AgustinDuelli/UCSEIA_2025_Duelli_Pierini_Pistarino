@@ -1,9 +1,7 @@
-from simpleai.search import CspProblem, backtrack
+from simpleai.search import CspProblem, backtrack, MOST_CONSTRAINED_VARIABLE
 from itertools import combinations
 
 # restricciones
-
-
 # verificar que exista por lo menos una posición adjacente al Jedi que no sea una pared
 def no_walls_adjacent_to_jedi(vars_acc, vars_val):
     jedi, walls = vars_val[0], vars_val[1:]
@@ -49,8 +47,6 @@ def at_most_six_adjacents(vars_acc, vars_val):
 
 
 droid_amounts = []
-map_x = 0
-map_y = 0
 
 
 # agregar todas las restricciones para las variables
@@ -79,7 +75,6 @@ def build_map(map_size: tuple[int, int], walls: int, droids: tuple[int, ...]):
 
     # usar globales para permitir usarlas al generar las restricciones
     global droid_amounts
-    global map_x, map_y
 
     # 1 Jedi
     JEDI = "jedi"
@@ -123,7 +118,6 @@ def build_map(map_size: tuple[int, int], walls: int, droids: tuple[int, ...]):
 
     problem = CspProblem(VARIABLES, DOMAINS, restrictions)
 
-    # solution = backtrack(problem, variable_heuristic=MOST_CONSTRAINED_VARIABLE)
     solution = backtrack(problem, inference=False)
 
     steps = []
