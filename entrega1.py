@@ -202,7 +202,7 @@ def brute_force_travel_distance(
     start: tuple[int, int], points: list[tuple[int, int]]
 ) -> float:
     """
-    Busca de las permutaciones de todos los puntos, el camino más corto desde el punto de inicio para alcanzar todos los puntos
+    Busca, de las permutaciones de todos los puntos, el camino más corto desde el punto de inicio para alcanzarlos a todos
 
     points: puntos que deben recorrerse
     start: punto de inicio
@@ -286,6 +286,7 @@ class JediProblem(SearchProblem):
             return available_actions
 
         # acciones que necesitan concentración
+        
         # movimientos diagonales
         diagonal_movements = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
 
@@ -370,7 +371,7 @@ class JediProblem(SearchProblem):
         # visita los droides en orden para mejor aproximación
         # cuadrantes:
         #   [ 0   1  1 ]
-        #     0   j  2
+        #   [ 0   j  2 ]
         #   [ 3   3  2 ]
         # j = jedi
         #
@@ -379,6 +380,7 @@ class JediProblem(SearchProblem):
 
 
 def play_game(jedi_at, jedi_concentration, walls, droids):
+    
     # generar tuplas del estado
     jedi_x_pos, jedi_y_pos = jedi_at
     global WALLS
@@ -408,4 +410,4 @@ def play_game(jedi_at, jedi_concentration, walls, droids):
 
 
 # mejoras posibles de heurística:
-# 1. ver si hay paredes en el medio
+# 1. ver si hay paredes en el camino
