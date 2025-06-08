@@ -96,32 +96,26 @@ def calculate_attack_amount(
     droids: tuple[tuple[int, int, int]], jedi_concentration: int
 ):
     """
-    Calcula cantidad de ataques mínimos necesarios para ganar. Por cada casilla con drones, mínimo se necesita un ataque. \n
-    Si se tienen múltiples drones, se agrega otro valor (ataque de fuerza de costo 2). \n
-    Si se tienen más de 5 drones pero no concentración, se agrega el costo de descansar (3s) más 2s en el primer caso de ataque con fuerza. \n
-    """
+    Calcula cantidad de ataques mínimos necesarios para ganar. Por cada casilla con droides, mínimo se necesita un ataque. \n
+    Si se tienen múltiples droides, se agrega otro valor (mínimo 2 de costo con ataque de fuerza). \n
+   """
 
     total = 0
 
     concentration_left = jedi_concentration
 
     for droid in droids:
-        # si existe la posición hay un dron
+        # si existe la posición hay un droide
         # como mínimo se necesita atacar (costo: 1s)
         total += 1
 
         _, _, amount = droid
 
-        # si hay más de un dron, como mínimo se necesitan dos segundos
+        # si hay más de un droide, como mínimo se necesitan dos segundos
         if amount > 1:
-            # si tiene suficiente concentración para un ataque en área con fuerza, la consume y realiza el ataque
-            if concentration_left >= 5:
-                total += 2
-                concentration_left -= 5
-            # sino, como mínimo, necesita realizar 2 ataques, requiriendo 2s
-            else:
-                total += 1
-
+            # sumar un segundo de costo más
+            total += 1
+            
     return total
 
 
